@@ -8,12 +8,12 @@ User = get_user_model()
 class SignUpSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
 
-    class Meta:
+    class Meta:  # pyright: ignore
         model = User
         fields = ('id', 'email', 'full_name', 'password')
 
     def create(self, validated_data):
-        return User.objects.create_user(
+        return User.objects.create_user(  # pyright: ignore[reportAttributeAccessIssue]
             email=validated_data['email'],
             full_name=validated_data.get('full_name', ''),
             password=validated_data['password'],
@@ -23,7 +23,7 @@ class SignUpSerializer(serializers.ModelSerializer):
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password])
 
-    class Meta:
+    class Meta:  # pyright: ignore
         model = User
         fields = ('email', 'full_name', 'password', 'avatar')
         extra_kwargs = {
@@ -31,25 +31,25 @@ class UserCreateSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
+        return User.objects.create_user(**validated_data)  # pyright: ignore[reportAttributeAccessIssue]
 
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
-    class Meta:
+    class Meta:  # pyright: ignore
         model = User
         fields = ('email', 'full_name', 'password')
 
     def create(self, validated_data):
-        return User.objects.create_user(
+        return User.objects.create_user(  # pyright: ignore[reportAttributeAccessIssue]
             email=validated_data['email'],
             full_name=validated_data['full_name'],
             password=validated_data['password'],
         )
 
 class UserRoleSerializer(serializers.ModelSerializer):
-    class Meta:
+    class Meta:  # pyright: ignore
         model = User
         fields = ['id', 'email', 'full_name', 'role']
         extra_kwargs = {
@@ -64,13 +64,13 @@ class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
 
-    def validate(self, data):
+    def validate(self, attrs):
         from django.contrib.auth import authenticate
         request = self.context.get('request')
-        user = authenticate(request, email=data['email'], password=data['password'])
+        user = authenticate(request, email=attrs['email'], password=attrs['password'])
         if user and user.is_active:
-            data['user'] = user
-            return data
+            attrs['user'] = user
+            return attrs
         raise serializers.ValidationError("Invalid credentials")
 
 

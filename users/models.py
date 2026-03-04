@@ -22,7 +22,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     full_name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    role = models.CharField(max_length=50, blank=True, null=True)  # optional; only admin can set via API
+    role = models.CharField(max_length=50, blank=True, null=True)
     avatar = models.ImageField(
         upload_to='avatars/',
         null=True,
